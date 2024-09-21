@@ -17,17 +17,25 @@
     
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);  // Default coordinates
+        // Get latitude and longitude from URL parameters (passed by Thunkable)
+        var urlParams = new URLSearchParams(window.location.search);
+        var lat = parseFloat(urlParams.get('lat'));
+        var lng = parseFloat(urlParams.get('lng'));
+
+        // Check if lat/lng are provided; otherwise, set a default map view without marker
+        if (lat && lng) {
+            var map = L.map('map').setView([lat, lng], 13); // Center on provided location
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup('Pothole location')
+                .openPopup();
+        } else {
+            var map = L.map('map').setView([0, 0], 2); // Default world view, no marker
+        }
 
         // Add the OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
-
-        // Example marker
-        L.marker([51.5, -0.09]).addTo(map)
-            .bindPopup('A sample pothole location.')
-            .openPopup();
     </script>
 </body>
 </html>
