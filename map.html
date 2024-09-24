@@ -22,20 +22,25 @@
         var lat = parseFloat(urlParams.get('lat'));
         var lng = parseFloat(urlParams.get('lng'));
 
-        // Check if lat/lng are provided; otherwise, set a default map view without marker
-        if (lat && lng) {
-            var map = L.map('map').setView([lat, lng], 13); // Center on provided location
-            L.marker([lat, lng]).addTo(map)
-                .bindPopup('Pothole location')
-                .openPopup();
-        } else {
-            var map = L.map('map').setView([0, 0], 2); // Default world view, no marker
-        }
+        // Initialize the map with a default view (centered at the provided coordinates)
+        var map = L.map('map').setView([28.3623707, 77.0660116], 13); // Center on provided coordinates
 
         // Add the OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
+
+        // Add a static marker at the provided coordinates (28.3623707, 77.0660116)
+        L.marker([28.3623707, 77.0660116]).addTo(map)
+            .bindPopup('Static marker: Pothole location (28.3623707, 77.0660116)')
+            .openPopup();
+
+        // Check if lat/lng are provided from URL; if so, add a dynamic marker
+        if (lat && lng) {
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup('Dynamic pothole location (' + lat + ', ' + lng + ')')
+                .openPopup();
+        }
     </script>
 </body>
 </html>
