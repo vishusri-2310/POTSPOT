@@ -34,28 +34,36 @@
             var lngList = urlParams.get('lng');
             var nameList = urlParams.get('name');
 
-            // Parse the latitude, longitude, and names lists
-            if (latList && lngList && nameList) {
-                latList = JSON.parse(latList.replace(/'/g, '"')); // Replace single quotes with double for JSON parsing
-                lngList = JSON.parse(lngList.replace(/'/g, '"'));
-                nameList = JSON.parse(nameList.replace(/'/g, '"'));
+            // Function to parse the input into an array
+            function parseInput(input) {
+                // Check if input is an array-like JSON string
+                try {
+                    const parsed = JSON.parse(input);
+                    return Array.isArray(parsed) ? parsed : [parsed];
+                } catch {
+                    // If parsing fails, return it as a single-element array
+                    return [input];
+                }
+            }
 
-                // Check if all arrays are of the same length
-                if (latList.length === lngList.length && latList.length === nameList.length) {
-                    // Loop through the coordinates and add markers to the map
-                    for (var i = 0; i < latList.length; i++) {
-                        var lat = parseFloat(latList[i]);
-                        var lng = parseFloat(lngList[i]);
-                        var name = nameList[i];
-                        L.marker([lat, lng]).addTo(map)
-                            .bindPopup(name) // Use the pothole name in the popup
-                            .openPopup();
-                    }
-                } else {
-                    console.error("Latitude, longitude, and name arrays must have the same length.");
+            // Parse the latitude, longitude, and names lists
+            latList = parseInput(latList);
+            lngList = parseInput(lngList);
+            nameList = parseInput(nameList);
+
+            // Check if all arrays are of the same length
+            if (latList.length === lngList.length && latList.length === nameList.length) {
+                // Loop through the coordinates and add markers to the map
+                for (var i = 0; i < latList.length; i++) {
+                    var lat = parseFloat(latList[i]);
+                    var lng = parseFloat(lngList[i]);
+                    var name = nameList[i];
+                    L.marker([lat, lng]).addTo(map)
+                        .bindPopup(name) // Use the pothole name in the popup
+                        .openPopup();
                 }
             } else {
-                console.error("Latitude, longitude, and name parameters are missing.");
+                console.error("Latitude, longitude, and name arrays must have the same length.");
             }
         }
 
