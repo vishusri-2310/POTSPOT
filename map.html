@@ -29,30 +29,33 @@
         function addMarkersFromParams() {
             var urlParams = new URLSearchParams(window.location.search);
             
-            // Get lat and lng arrays from URL
+            // Get lat, lng, and name arrays from URL
             var latList = urlParams.get('lat');
             var lngList = urlParams.get('lng');
+            var nameList = urlParams.get('name');
 
-            // Parse the latitude and longitude lists
-            if (latList && lngList) {
+            // Parse the latitude, longitude, and names lists
+            if (latList && lngList && nameList) {
                 latList = JSON.parse(latList.replace(/'/g, '"')); // Replace single quotes with double for JSON parsing
                 lngList = JSON.parse(lngList.replace(/'/g, '"'));
+                nameList = JSON.parse(nameList.replace(/'/g, '"'));
 
-                // Check if both arrays are of the same length
-                if (latList.length === lngList.length) {
+                // Check if all arrays are of the same length
+                if (latList.length === lngList.length && latList.length === nameList.length) {
                     // Loop through the coordinates and add markers to the map
                     for (var i = 0; i < latList.length; i++) {
                         var lat = parseFloat(latList[i]);
                         var lng = parseFloat(lngList[i]);
+                        var name = nameList[i];
                         L.marker([lat, lng]).addTo(map)
-                            .bindPopup('Pothole ' + (i + 1))
+                            .bindPopup(name) // Use the pothole name in the popup
                             .openPopup();
                     }
                 } else {
-                    console.error("Latitude and longitude arrays must have the same length.");
+                    console.error("Latitude, longitude, and name arrays must have the same length.");
                 }
             } else {
-                console.error("Latitude and longitude parameters are missing.");
+                console.error("Latitude, longitude, and name parameters are missing.");
             }
         }
 
