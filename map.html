@@ -28,19 +28,31 @@
         // Function to add markers based on URL parameters
         function addMarkersFromParams() {
             var urlParams = new URLSearchParams(window.location.search);
-            var markerCount = parseInt(urlParams.get('count')) || 0; // Get the count of markers
+            
+            // Get lat and lng arrays from URL
+            var latList = urlParams.get('lat');
+            var lngList = urlParams.get('lng');
 
-            for (var i = 1; i <= markerCount; i++) {
-                var lat = parseFloat(urlParams.get('lat' + i));
-                var lng = parseFloat(urlParams.get('lng' + i));
-                var name = urlParams.get('name' + i) || 'Pothole location'; // Default name if not provided
+            // Parse the latitude and longitude lists
+            if (latList && lngList) {
+                latList = JSON.parse(latList.replace(/'/g, '"')); // Replace single quotes with double for JSON parsing
+                lngList = JSON.parse(lngList.replace(/'/g, '"'));
 
-                // Check if lat/lng are provided; if so, add a marker
-                if (!isNaN(lat) && !isNaN(lng) && name) {
-                    L.marker([lat, lng]).addTo(map)
-                        .bindPopup(name)
-                        .openPopup();
+                // Check if both arrays are of the same length
+                if (latList.length === lngList.length) {
+                    // Loop through the coordinates and add markers to the map
+                    for (var i = 0; i < latList.length; i++) {
+                        var lat = parseFloat(latList[i]);
+                        var lng = parseFloat(lngList[i]);
+                        L.marker([lat, lng]).addTo(map)
+                            .bindPopup('Pothole ' + (i + 1))
+                            .openPopup();
+                    }
+                } else {
+                    console.error("Latitude and longitude arrays must have the same length.");
                 }
+            } else {
+                console.error("Latitude and longitude parameters are missing.");
             }
         }
 
